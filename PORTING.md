@@ -120,3 +120,20 @@ example suite is the acceptance criterion for the completed port.
 - Built the complete runtime into an ELF32 relocatable `runtime/rrt0.o`.
 - Made `BigNumProduct` explicitly 64-bit so 32-by-32-bit arithmetic does not
   rely on undefined full-width shifts on the i386 ABI.
+
+### Phase 3: ELF cold start
+
+- Replaced the compiler's dependency on a serialized a.out process image with
+  an ELF cold-start path: a fresh `Rc` parses the standard environment and the
+  user program consecutively in the same process.
+- Retained the old image writer behind a compile-time guard for historical
+  reference; it is not compiled in the Linux configuration.
+- Mapped `realloc` to `GC_realloc`; the current yacc skeleton grows a parser
+  stack originally allocated through `GC_malloc`, and mixing it with libc
+  `realloc` corrupted the syntax tree while parsing `Ginitenv.r`.
+- Replaced the historical heap-address heuristic in `is_ptr` with `GC_base`
+  for the system collector, whose i386 heap may be below the executable.
+- Made the string-expansion template writable instead of modifying a string
+  literal in read-only storage.
+- Verified under native i386 GDB that `Rc -G` exits normally and translates
+  `examples/fact.r` into a 2384-byte RIC file.

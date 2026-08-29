@@ -1,9 +1,12 @@
-.PHONY: all check-abi clean-port
+.PHONY: all compiler-core check-abi clean-port
 
 include config/linux-i386.mk
 
-all:
+all: check-abi compiler-core
+
+compiler-core:
 	env CCACHE_DISABLE=1 $(MAKE) -C src -f Makefile.main all \
+		PORT_CORE_ONLY=1 \
 		RROOT=$(CURDIR) CC=gcc LD=ld AR=ar \
 		PORT_CFLAGS="$(CPPFLAGS) $(CFLAGS)" REL_LDFLAGS="-m elf_i386" \
 		GC_LIBS="$(GC_LIBS)"

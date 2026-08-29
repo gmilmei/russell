@@ -1,15 +1,20 @@
 RROOT = <path to parent directory, normally defined by top level Makefile>
 RR_TEMPLATE= \"$(RROOT)\\0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\"
-CFLAGS= $(PORT_CFLAGS) -DRROOT=$(RR_TEMPLATE) -I$(RROOT)/src
+CFLAGS= $(PORT_CFLAGS) -DRROOT=$(RR_TEMPLATE) -iquote $(RROOT)/src
 REL_LDFLAGS ?=
 # May need -Bstatic in some versions of SunOS:
 LFLAGS=
 stinclfiles= stree/ststructs.mh stree/stsizes.mh stree/stptrs.mh stree/stmkfields.mh stree/Array.h datatypes/consnodes.h
 
 # - the order of the following probably matters, even though it shouldn't:
+ifdef PORT_CORE_ONLY
+all: $(RROOT)/fixmacros $(RROOT)/fixstrings $(RROOT)/rc Rc \
+RICfilter/filter delab/delab RIC_to_C/to_C $(RROOT)/runtime/rrt0.o
+else
 all: $(RROOT)/fixmacros $(RROOT)/fixstrings $(RROOT)/rc rc.x Grc.x \
 RICfilter/filter delab/delab RIC_to_C/to_C $(RROOT)/runtime/rrt0.o $(RROOT)/rhelp \
 $(RROOT)/extract_sig RICopt
+endif
 
 root_path.h:
 	echo -n "#define ROOT_PATH \"" > root_path.h

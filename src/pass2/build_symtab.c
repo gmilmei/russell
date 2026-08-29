@@ -335,5 +335,3 @@ NODE * x;
             x, kindname(x->kind));
     abort();
 }
-
-

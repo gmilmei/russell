@@ -106,7 +106,9 @@ char copyright3[] = "This material is provided as is, with no warranty expressed
  */
 
 # include <stdio.h>
-# include <a.out.h>
+# ifndef USE_ELF_COLD_START
+#   include <a.out.h>
+# endif
 # include "parm.h"
 # include "arith.h"
 
@@ -204,6 +206,7 @@ main(argc,argv)
 int argc;
 char **argv;
 {   int argn;   /* arg number currently being processed. */
+    boolean cold_start = (insrtptr == NIL);
 
 #   ifdef VERBOSE
 	fprintf(stderr, "Starting up\n");
@@ -381,6 +384,40 @@ char **argv;
 	    }
 	}
 
+#   ifdef USE_ELF_COLD_START
+    /*
+     * ELF cannot use the historical a.out process-image dump.  Recreate the
+     * same state in one process: parse the standard environment first, then
+     * parse the user program below.  The second parser invocation inserts its
+     * tree at the control-B marker remembered in insrtptr.
+     */
+    if (cold_start && !initflag) {
+	char initname[1024];
+
+	snprintf(initname, sizeof(initname), "%s/src/%s", RROOT,
+		 Gflag ? "Ginitenv.r" : "initenv.r");
+	if (freopen(initname, "r", stdin) == NULL) {
+	    fprintf(stderr, "Can't open standard environment %s\n", initname);
+	    exit(1);
+	}
+	initflag = TRUE;
+	yyinfnm = stt_enter(initname, strlen(initname)+1);
+	yyline = 0;
+	addposition(yyinfnm, yyline);
+	if (Gflag) {
+	    inline_cnvt = Ginline_cnvt;
+	} else {
+	    inline_cnvt = Vinline_cnvt;
+	}
+	yyparse();
+	initflag = FALSE;
+	if (yynerrs != 0 || insrtptr == NIL) {
+	    fprintf(stderr, "Failed to initialize standard environment\n");
+	    exit(1);
+	}
+    }
+#   endif
+
     /* open input file */
         if ( freopen( ifname, "r", stdin ) == NULL ) {
             fprintf(stderr, "Can't open %s\n", ifname);
@@ -444,6 +481,11 @@ char **argv;
         exit(1);
 
     if( initflag ) {
+#       ifdef USE_ELF_COLD_START
+	fprintf(stderr,
+		"Compiler image generation is unavailable in ELF cold-start mode\n");
+	exit(1);
+#       else
         /* write out current core image (except for stack) as a loadable file */
                 /* and quit */
             int rcxdescr;  /* output file descriptor */
@@ -598,6 +640,7 @@ char **argv;
 #                 endif
 		  write(rcxdescr, &symtsize, sizeof (long));
 	     exit(0);
+#       endif
         }
 
 

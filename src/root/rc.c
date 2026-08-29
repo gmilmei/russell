@@ -424,7 +424,11 @@ char **argv;
 	strcat(apmnflags, "G");
 	if (Rcname[0] != 'R') {
 	    /* Haven't seen -U */
+#           ifdef USE_ELF_COLD_START
+	    strcpy(Rcname, "Rc");
+#           else
 	    strcpy(Rcname, "Grc.x");
+#           endif
 	}
     }
 
@@ -514,7 +518,11 @@ char **argv;
 		strcpy(fullrcname, rcname);
 	    }
 	    if (Rcname[0] == 0)
+#           ifdef USE_ELF_COLD_START
+		strcat(fullrcname, "Rc");
+#           else
 		strcat(fullrcname, "rc.x");
+#           endif
             else
 		strcat(fullrcname, Rcname);
 #           if vax
@@ -752,8 +760,14 @@ char **argv;
     if (!Sflag) {
       /* assemble the result */
         if (rfork() == 0) {
+#           ifdef USE_ELF_COLD_START
+	    execlp("gcc", "gcc", "-m32", "-c", "-o",
+		   outfilename(argv[argf], 'o'),
+		   outfilename(argv[argf], 's'), 0);
+#           else
 	    execl("/bin/as", "as", "-o", outfilename(argv[argf], 'o'),
 					 outfilename(argv[argf], 's'), 0);
+#           endif
             fprintf(stderr, "Can't exec /bin/as\n");
             rmfiles();
             exit(1);
@@ -767,7 +781,7 @@ char **argv;
         }
 
 	if (!cflag && !Xflag) {
-          char * ld_argv[MAXNOBJFILES + 10];
+	  char * ld_argv[MAXNOBJFILES + 16];
           int ld_argc = 0;
           int i;
 
@@ -780,6 +794,7 @@ char **argv;
                   add_objfile(strcat(RROOT, "/runtime/rrt0.o"));
 #               endif
 	      /* Add C library to list of libraries */
+#             ifndef USE_ELF_COLD_START
 		if (nlibraries >= MAXNLIBRARIES) {
 		  fprintf(stderr, "Too many libraries\n");
 		  exit(1);
@@ -789,14 +804,24 @@ char **argv;
 		} else {
 		  libraries[nlibraries++] = "/lib/libc.a";
 		}
+#             endif
 	    }
 
           /* build argument vector for ld command */
-            ld_argv[ld_argc++] = "ld";
+            ld_argv[ld_argc++] =
+#           ifdef USE_ELF_COLD_START
+		"gcc";
+#           else
+		"ld";
+#           endif
             if (rflag) {
               /* Make object file relocatable */
                 ld_argv[ld_argc++] = "-r";
 	    } else {
+#             ifdef USE_ELF_COLD_START
+		ld_argv[ld_argc++] = "-m32";
+		ld_argv[ld_argc++] = "-no-pie";
+#             else
 		ld_argv[ld_argc++] = "-e";
 		ld_argv[ld_argc++] = "start";
 		if (Pflag) {
@@ -804,6 +829,7 @@ char **argv;
 		} else {
 		    ld_argv[ld_argc++] = "/lib/crt0.o";
 		}
+#             endif
 	    }
             for (i = 0; i < nobjfiles; i++) {
                 ld_argv[ld_argc++] = objfiles[i];
@@ -811,11 +837,23 @@ char **argv;
 	    for (i = 0; i < nlibraries; i++) {
 		ld_argv[ld_argc++] = libraries[i];
             }
+#           ifdef USE_ELF_COLD_START
+	      if (!rflag) {
+		ld_argv[ld_argc++] = "-lgc";
+		ld_argv[ld_argc++] = "-lpthread";
+		ld_argv[ld_argc++] = "-ldl";
+		ld_argv[ld_argc++] = "-lm";
+	      }
+#           endif
             ld_argv[ld_argc++] = 0;
           /* Fork and exec ld command */
             if (rfork() == 0) {
-	      execv("/bin/ld", ld_argv);
-              fprintf(stderr, "Can't exec /bin/ld\n");
+#             ifdef USE_ELF_COLD_START
+	      execvp("gcc", ld_argv);
+#             else
+              execv("/bin/ld", ld_argv);
+#             endif
+              fprintf(stderr, "Can't exec linker\n");
               rmfiles();
               exit(1);
             }

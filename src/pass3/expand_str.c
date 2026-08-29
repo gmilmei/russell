@@ -25,7 +25,7 @@ NODE * string;
     NODE * expansion;     /* current partial expansion                  */
     NODE * id_node;       /* identifier node currently being generated  */
     NODE * conc_op;       /* concatenation operator node                */
-    char * const_template = "'X'";
+    char const_template[] = "'X'";
 
 #   ifdef DEBUG
         if (string -> sel_type == NIL) {

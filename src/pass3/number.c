@@ -38,4 +38,3 @@ NODE * p;
         }
     p -> post_num = next_post++;
 }
-

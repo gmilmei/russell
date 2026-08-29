@@ -43,6 +43,7 @@
 #   define salloc GC_malloc
 #   define alloc GC_malloc
 #   define malloc GC_malloc
+#   define realloc GC_realloc
 #   define free GC_free
 
 /* Translate the gc1.X functions to the 2.X ones: */

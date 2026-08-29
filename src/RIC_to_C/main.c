@@ -38,7 +38,11 @@
 
 
 # define STDOUT_FD 1
-# define DELAB strcat(RROOT, "/src/delab/delab")
+# ifdef USE_ELF_COLD_START
+#   define DELAB RROOT "/src/delab/delab"
+# else
+#   define DELAB strcat(RROOT, "/src/delab/delab")
+# endif
 # ifdef GCC
 #   define CC "/usr/local/gcc"
 # else
@@ -1460,9 +1464,19 @@ char **argv;
 	/* cc neglects to pay attention to values returned by the     */
 	/* wait system call.                                          */
 	    if (profile) {
+#ifdef USE_ELF_COLD_START
+		execl(CC, "cc", "-m32", "-std=gnu89", "-fcommon", "-fno-pie",
+		      "-S", Oflag? "-O" : "-g", "-p", "-o", sfile, Cfile, 0);
+#else
 		execl(CC, "cc", "-S", Oflag? "-O" : "-g" , "-p", "-o", sfile, Cfile, 0);
+#endif
 	    } else {
+#ifdef USE_ELF_COLD_START
+		execl(CC, "cc", "-m32", "-std=gnu89", "-fcommon", "-fno-pie",
+		      "-S", Oflag? "-O" : "-g", "-o", sfile, Cfile, 0);
+#else
 		execl(CC, "cc", "-S", Oflag? "-O" : "-g" , "-o", sfile, Cfile, 0);
+#endif
 	    }
 	    fprintf(stderr, "Couldn't exec %s\n", CC);
 	    exit(1);

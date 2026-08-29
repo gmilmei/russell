@@ -87,15 +87,27 @@
  */
 # define STTNBLKS 64		/* Max number of blocks in string table. */
 
-# define RCNAME (char *) strcat(RROOT,"/src/")
 # define PPNAME "/lib/cpp"
-# define OPTNAME (char *) strcat(RROOT,"/src/opt.awk")
-# define RICFILTERNAME (char *) strcat(RROOT,"/src/RICfilter/filter")
-# define RICOPTNAME (char *) strcat(RROOT,"/src/RICopt")
-# ifdef GEN_C
-#   define CGNAME (char *) strcat(RROOT, "/src/RIC_to_C/to_C")
+# ifdef USE_ELF_COLD_START
+#   define RCNAME RROOT "/src/"
+#   define OPTNAME RROOT "/src/opt.awk"
+#   define RICFILTERNAME RROOT "/src/RICfilter/filter"
+#   define RICOPTNAME RROOT "/src/RICopt"
+#   ifdef GEN_C
+#     define CGNAME RROOT "/src/RIC_to_C/to_C"
+#   else
+#     define CGNAME RROOT "/src/cg"
+#   endif
 # else
-#   define CGNAME (char *) strcat(RROOT, "/src/cg")
+#   define RCNAME (char *) strcat(RROOT,"/src/")
+#   define OPTNAME (char *) strcat(RROOT,"/src/opt.awk")
+#   define RICFILTERNAME (char *) strcat(RROOT,"/src/RICfilter/filter")
+#   define RICOPTNAME (char *) strcat(RROOT,"/src/RICopt")
+#   ifdef GEN_C
+#     define CGNAME (char *) strcat(RROOT, "/src/RIC_to_C/to_C")
+#   else
+#     define CGNAME (char *) strcat(RROOT, "/src/cg")
+#   endif
 # endif
 
 # define OBJFILELIST ".objfilelist"

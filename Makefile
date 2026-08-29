@@ -1,4 +1,4 @@
-.PHONY: all compiler-core check-abi clean-port
+.PHONY: all compiler-core check-abi clean clean-port
 
 include config/linux-i386.mk
 
@@ -20,3 +20,8 @@ build/linux-i386/abi-check: tools/abi_check.c config/linux-i386.mk
 
 clean-port:
 	rm -rf build/linux-i386
+
+clean: clean-port
+	$(MAKE) -C src -f Makefile.main clean RROOT=$(CURDIR)
+	$(MAKE) -C runtime clean
+	rm -f rc fixmacros fixstrings a.out

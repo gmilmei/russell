@@ -79,10 +79,10 @@ extern char *op_code_table[];	/* names of RIC opcodes */
 char label_buf[MAXLABELSZ+1];	/* temp buffer to store labels in */
 char save_label[MAXLABELSZ+1];	/* buffer to save labels in for future use */
 
-char * crud[20];		/* used to calculate next globally unique lbl*/
+char crud[20];		/* used to calculate next globally unique lbl*/
 
 /* global label names for each local label index number */
-char * cur_name[MAX_TEMP_LAB+1] = 
+char cur_name[MAX_TEMP_LAB+1][MAXLABELSZ+1] =
 	{ "..............", "..............", "..............",
 	  "..............", "..............", "..............",
 	  "..............", "..............", "..............",

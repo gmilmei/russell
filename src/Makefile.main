@@ -1,10 +1,21 @@
 RROOT = <path to parent directory, normally defined by top level Makefile>
+ifdef PORT_CORE_ONLY
+RR_TEMPLATE= \"$(RROOT)\"
+else
 RR_TEMPLATE= \"$(RROOT)\\0XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\"
+endif
 CFLAGS= $(PORT_CFLAGS) -DRROOT=$(RR_TEMPLATE) -iquote $(RROOT)/src
 REL_LDFLAGS ?=
 # May need -Bstatic in some versions of SunOS:
 LFLAGS=
 stinclfiles= stree/ststructs.mh stree/stsizes.mh stree/stptrs.mh stree/stmkfields.mh stree/Array.h datatypes/consnodes.h
+
+.PHONY: clean
+
+clean:
+	find . -type f \( -name '*.o' -o -name '*.a' \) -delete
+	rm -f Rc PRc rc.x Grc.x RICopt root_path.h
+	rm -f RICfilter/filter delab/delab RIC_to_C/to_C
 
 # - the order of the following probably matters, even though it shouldn't:
 ifdef PORT_CORE_ONLY
@@ -48,7 +59,7 @@ RICfilter/filter:
 	cd RICfilter; make
 
 # Intermediate code to C converter
-RIC_to_C/to_C:
+RIC_to_C/to_C: RIC_to_C/main.c RIC_to_C/Makefile
 	cd RIC_to_C; make RROOT=$(RROOT)
 
 # Static garbage collector
@@ -56,7 +67,7 @@ RICopt: $(RROOT)/rhelp
 	echo "install ../rc somewhere along your path; then do a make in lh_opt"
 
 # Local label removal & similar processing
-delab/delab:
+delab/delab: delab/delab.c delab/op_codes.c delab/Makefile
 	cd delab; make
 
 # -- runtime system

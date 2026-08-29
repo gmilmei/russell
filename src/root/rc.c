@@ -109,6 +109,12 @@ char *rctmp3name;   /* Intermediate code optimizer data flow info in  */
 char *rctmp4name;   /* intermediate code optimizer data flow info out */
 		    /* also used as input file to RICfilter           */
 
+static char rctmp0template[] = "/tmp/rctmp0XXXXXX";
+static char rctmp1template[] = "/tmp/rctmp1XXXXXX";
+static char rctmp2template[] = "/tmp/rctmp2XXXXXX";
+static char rctmp3template[] = "/tmp/rctmp3XXXXXX";
+static char rctmp4template[] = "/tmp/rctmp4XXXXXX";
+
 /* Flag variables.
  */
 boolean aflag;              /* generate abstract syntax */
@@ -242,7 +248,7 @@ char **argv;
 	  }
          } else if ( argv[argn][0] == '-' ) {
           char *flagp;
-          char *farg = "0";
+          char farg[2] = "0";
 	  switch( argv[argn][1] ) {	/* may be special or just flag */
 
 	   case 'l' :           /* library */
@@ -456,14 +462,14 @@ char **argv;
     }
 
     /* Generate temp file names */
-        rctmp0name = mktemp("/tmp/rctmp0XXXXXX");
-        rctmp1name = mktemp("/tmp/rctmp1XXXXXX");
-	rctmp2name = mktemp("/tmp/rctmp2XXXXXX");
+	rctmp0name = mktemp(rctmp0template);
+	rctmp1name = mktemp(rctmp1template);
+	rctmp2name = mktemp(rctmp2template);
 	if (Gflag & Oflag) {
-	  rctmp4name = mktemp("/tmp/rctmp4XXXXXX");
+	  rctmp4name = mktemp(rctmp4template);
 	}
 	if (OOflag) {
-	  rctmp3name = mktemp("/tmp/rctmp3XXXXXX");
+	  rctmp3name = mktemp(rctmp3template);
 	}
 
     /* Remove old object file list */
@@ -789,9 +795,17 @@ char **argv;
 	    add_objfile(outfilename(argv[argf], 'o'));
 	    if (!rflag) {
 #               ifdef RT
+#                 ifdef USE_ELF_COLD_START
+                  add_objfile(RROOT "/rt_runtime/rrt0.o");
+#                 else
                   add_objfile(strcat(RROOT, "/rt_runtime/rrt0.o"));
+#                 endif
 #               else
+#                 ifdef USE_ELF_COLD_START
+                  add_objfile(RROOT "/runtime/rrt0.o");
+#                 else
                   add_objfile(strcat(RROOT, "/runtime/rrt0.o"));
+#                 endif
 #               endif
 	      /* Add C library to list of libraries */
 #             ifndef USE_ELF_COLD_START

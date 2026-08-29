@@ -1,5 +1,13 @@
 CFLAGS = $(PORT_CFLAGS)
 
+.PHONY: all clean
+
+all: rrt0.o
+
+clean:
+	find . -type f \( -name '*.o' -o -name '*.a' \) -delete
+	rm -f BigNum/testKerN BigNum/bztest
+
 OBJECTS= alias.o bool.o chstr.o long.o long_mult.o \
 	 short.o void.o comb_float.o array.o call_russell.o \
 	 type_constr.o misc.o ref.o list.o lazy_list.o file.o callcc.o \

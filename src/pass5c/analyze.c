@@ -36,6 +36,7 @@
 # endif
 
 extern FILE * unparse_file;
+long get_complexity();
 
 /* Is p of the form id $ id $ ... $ id? */
 boolean is_selected_id(p)

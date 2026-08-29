@@ -6,7 +6,12 @@
 
 #define _RUNTIME_
 
-#include "../src/gc/gc.h"
+#ifdef USE_SYSTEM_GC
+# include <gc/gc.h>
+  typedef GC_word word;
+#else
+# include "../src/gc/gc.h"
+#endif
 
 #ifdef M68K_SUN
 #   define M68K
@@ -42,7 +47,7 @@ struct obj {
 #   define ABORT(s) XR_CallDebugger(s)
 # else
 #   include <stdio.h>
-#   define ERRMSG(s) fputs(stderr,s); fputs(stderr,"\n")
+#   define ERRMSG(s) fputs((s), stderr); fputs("\n", stderr)
 #   define MSG(s) puts(s)
 #   define FLUSH_MSG fflush(stdout)
 #   define ABORT(s) abort(s)
@@ -60,4 +65,3 @@ struct funcobj {
 char * startup_sfp; /* Frame pointer for Russell startup routine */
 
 extern int trace_flag;
-

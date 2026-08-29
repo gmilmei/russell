@@ -603,7 +603,7 @@ struct obj *op;       /* val Long */
 	  lenb = BnnNumLeadingZeroBitsInDigit(op-> obj_component[lenw]) - 1;
 	} else if (msw < 0) {
 	  tmp_msw = ~msw;
-	  lenb = BnnNumLeadingZeroBitsInDigit(&tmp_msw) - 1;
+	  lenb = BnnNumLeadingZeroBitsInDigit((BigNumDigit)tmp_msw) - 1;
         } else {
 	  lenb = WORDSZ - 1/* needed for sign */;
         }

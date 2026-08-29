@@ -3,7 +3,10 @@
 include config/linux-i386.mk
 
 all:
-	$(MAKE) -C src all
+	env CCACHE_DISABLE=1 $(MAKE) -C src -f Makefile.main all \
+		RROOT=$(CURDIR) CC=gcc LD=ld AR=ar \
+		PORT_CFLAGS="$(CPPFLAGS) $(CFLAGS)" REL_LDFLAGS="-m elf_i386" \
+		GC_LIBS="$(GC_LIBS)"
 
 check-abi: build/linux-i386/abi-check
 	$(I386_RUNNER) build/linux-i386/abi-check

@@ -5,6 +5,9 @@
 # include "types.h"
 # include "callcc.h"
 
+void segv_handler();
+void intr_handler();
+
 /*
  * This is an implementation of Callcc, a Russell translation of the
  * Scheme call/cc construct.  Continuations are represented as a
@@ -263,9 +266,6 @@ MkFVAL1(Signal);
 MkIP(UnSignal(sig_num))
 int sig_num;
 {
-    void segv_handler();
-    void intr_handler();
-
     sig_cont[sig_num] = NULL_CE;
     if (sig_num == SIGINT) {
 	signal(SIGINT, intr_handler);

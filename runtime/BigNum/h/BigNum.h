@@ -67,7 +67,7 @@ typedef int				Boolean;
 
 typedef BigNumDigit * 	BigNum;		/* A big number is a digit pointer */
 typedef BigNumDigit	BigNumCarry;	/* Either 0 or 1 */
-typedef unsigned long 	BigNumProduct;	/* The product of two digits */
+typedef unsigned long long BigNumProduct; /* The product of two digits */
 /* BigNumLength must be int as nl is in the code, remember int is 16 bits on MSDOS - jch */
 typedef unsigned int	BigNumLength;	/* The length of a bignum */
 #ifdef DIGITon16BITS
@@ -93,29 +93,30 @@ extern BigNumCmp	BnnCompare			();
 
 		/*********** functions of KerN.c **********/
 
-extern void 		BnnSetToZero			();
-extern void 		BnnAssign			();
-extern void 		BnnSetDigit			();
-extern BigNumDigit 	BnnGetDigit			();
-extern BigNumLength	BnnNumDigits			();
-extern BigNumDigit	BnnNumLeadingZeroBitsInDigit	();
-extern Boolean 		BnnDoesDigitFitInWord 		();
-extern Boolean		BnnIsDigitZero 			();
-extern Boolean		BnnIsDigitNormalized 		();
-extern Boolean 		BnnIsDigitOdd			();
-extern BigNumCmp		BnnCompareDigits		();
-extern void 		BnnComplement			();
-extern void 		BnnAndDigits			();
-extern void		BnnOrDigits			();
-extern void		BnnXorDigits			();
-extern BigNumDigit	BnnShiftLeft			();
-extern BigNumDigit	BnnShiftRight			();
-extern BigNumCarry 	BnnAddCarry			();
-extern BigNumCarry 	BnnAdd				();
-extern BigNumCarry 	BnnSubtractBorrow		();
-extern BigNumCarry 	BnnSubtract			();
-extern BigNumCarry 	BnnMultiplyDigit		();
-extern BigNumDigit	BnnDivideDigit			();
+extern void BnnSetToZero(BigNum, int);
+extern void BnnAssign(BigNum, BigNum, int);
+extern void BnnSetDigit(BigNum, int);
+extern BigNumDigit BnnGetDigit(BigNum);
+extern BigNumLength BnnNumDigits(BigNum, int);
+extern BigNumDigit BnnNumLeadingZeroBitsInDigit(BigNumDigit);
+extern Boolean BnnDoesDigitFitInWord(BigNumDigit);
+extern Boolean BnnIsDigitZero(BigNumDigit);
+extern Boolean BnnIsDigitNormalized(BigNumDigit);
+extern Boolean BnnIsDigitOdd(BigNumDigit);
+extern BigNumCmp BnnCompareDigits(BigNumDigit, BigNumDigit);
+extern void BnnComplement(BigNum, int);
+extern void BnnAndDigits(BigNum, BigNumDigit);
+extern void BnnOrDigits(BigNum, BigNumDigit);
+extern void BnnXorDigits(BigNum, BigNumDigit);
+extern BigNumDigit BnnShiftLeft(BigNum, int, int);
+extern BigNumDigit BnnShiftRight(BigNum, int, int);
+extern BigNumCarry BnnAddCarry(BigNum, int, BigNumCarry);
+extern BigNumCarry BnnAdd(BigNum, int, BigNum, int, BigNumCarry);
+extern BigNumCarry BnnSubtractBorrow(BigNum, int, BigNumCarry);
+extern BigNumCarry BnnSubtract(BigNum, int, BigNum, int, BigNumCarry);
+extern BigNumCarry BnnMultiplyDigit(BigNum, int, BigNum, int,
+				    BigNumDigit);
+extern BigNumDigit BnnDivideDigit(BigNum, BigNum, int, BigNumDigit);
 
 /**/
 

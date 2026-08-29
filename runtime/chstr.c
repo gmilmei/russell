@@ -334,8 +334,8 @@ struct ar * A;
 MkEPFVAL0(ChStr_c_null,ChStr_Const,"");
 
 #define MkCHSTRCONST(nm,val) \
-char ChStr_v_/**/nm [2] = { val, 0 }; \
-MkEPFVAL0(ChStr_c_/**/nm,ChStr_Const,ChStr_v_/**/nm)
+char ChStr_v_##nm [2] = { val, 0 }; \
+MkEPFVAL0(ChStr_c_##nm,ChStr_Const,ChStr_v_##nm)
 
 MkCHSTRCONST(9,9);
 MkCHSTRCONST(10,10);
@@ -441,7 +441,7 @@ MkCHSTRCONST(126,126);
 
 MkTVAL(ChStr) = {
 
-#   define V(x) &FVAL(ChStr_c_/**/x)
+#   define V(x) &FVAL(ChStr_c_##x)
     V(9),     V(10),    V(13),
     V(32),    V(33),    V(34),    V(35),
     V(36),    V(37),    V(38),    V(39),

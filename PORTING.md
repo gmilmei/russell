@@ -49,10 +49,10 @@ sufficient on an ELF system.
 - [x] Preserve and identify the original source baseline.
 - [x] Establish a reproducible Linux i386 toolchain and ABI checks.
 - [ ] Make the C bootstrap components compile in GNU89 mode.
-- [ ] Replace obsolete direct linker and startup-object invocations.
+- [x] Replace obsolete direct linker and startup-object invocations.
 - [ ] Replace a.out compiler-image and signature storage.
 - [ ] Port and test the runtime, garbage collector, and call/cc.
-- [ ] Build the BigNum C32 backend and verify arithmetic.
+- [x] Build the BigNum C32 backend and verify arithmetic.
 - [ ] Complete the compiler bootstrap.
 - [ ] Run and automate the example-program regression suite.
 - [ ] Enable optimization, tighten diagnostics, and document installation.
@@ -98,3 +98,25 @@ example suite is the acceptance criterion for the completed port.
 - Run target programs through `qemu-i386` by default.  Native ELF32 execution
   is blocked by the development sandbox's syscall filter; native i386 Linux
   builders can override this with `make I386_RUNNER= check-abi`.
+
+### Phase 2
+
+- Replaced hard-coded C compiler invocations with `$(CC)`.
+- Replaced final links through `ld`, `crt0.o`, and static `libc.a` with GCC
+  driver links.  Relocatable aggregation still uses `$(LD) -r`.
+- Routed the historical build through the Linux i386 configuration.
+- Classified the remaining blockers as removed `varargs.h`, conflicting
+  historical declarations, and direct a.out structure access.
+- Ported the syntax-tree variadic constructors to `stdarg.h`.
+- Made the parser grammar compatible with the current Berkeley Yacc output.
+- Built the C driver, parser, most compiler passes, and bundled collector as
+  ELF32 objects; runtime and BigNum compatibility work remains.
+- Switched the Linux reference build to the system Boehm GC (`gc-devel.i686`)
+  through `USE_SYSTEM_GC`; the bundled collector remains in the source tree
+  but is no longer part of the default dependency graph.
+- Ported the BigNum C32 declarations for current GCC, preserved i386 flags in
+  its recursive build, and passed the complete `testKerN` and `bztest` suites
+  under `qemu-i386`.
+- Built the complete runtime into an ELF32 relocatable `runtime/rrt0.o`.
+- Made `BigNumProduct` explicitly 64-bit so 32-by-32-bit arithmetic does not
+  rely on undefined full-width shifts on the i386 ABI.

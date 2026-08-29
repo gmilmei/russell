@@ -5,6 +5,11 @@
 #ifndef PARMH
 
 # define PARMH
+# ifdef USE_SYSTEM_GC
+#   include <gc/gc.h>
+# else
+#   include "gc/gc.h"
+# endif
 /* # include <whoami.h> */
 # ifdef vax
 #   define VAX

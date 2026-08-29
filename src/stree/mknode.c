@@ -3,7 +3,7 @@
 
 # include <stdio.h>
 
-# include <varargs.h>
+# include <stdarg.h>
 
 # include "ststructs.mh"
 
@@ -58,11 +58,9 @@ extern int yyvline;
  * same length -- the length of a C "unsigned".
  */
 
-NODE *mknode( va_alist )
-va_dcl
+NODE *mknode(int strkind, ...)
 {
     va_list ap;
-    int strkind;
     register unsigned *p;
     unsigned q;
     register int v; /* bit vector identifying pointer fields in strkind */
@@ -77,8 +75,7 @@ va_dcl
             flcheck (0,1);  /* Do a quick free list check */
 #   endif
 
-    va_start(ap);
-    strkind = va_arg(ap, int);
+    va_start(ap, strkind);
 
     p = (unsigned *)salloc(stsize[strkind] * (sizeof (NODE *)));
     result = (NODE *)p;
@@ -332,4 +329,3 @@ NODE * id;
     strcat(tokenbuf, getname(id -> id_str_table_index));
     return(mkcompnm(stt_enter(tokenbuf, strlen(tokenbuf)+1)));
 }
-

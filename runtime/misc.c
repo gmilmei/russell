@@ -20,6 +20,7 @@ MkFVAL1(Argv);
 
 /* Handle a runtime error - the simple case: */
 russell_error(s)
+char *s;
 {
     ERRMSG(s);
     print_tr_stack();

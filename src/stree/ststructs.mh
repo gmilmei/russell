@@ -2229,9 +2229,9 @@
 #define chgfld(pp, v) (*(pp) = (v))
 #define initfld(pp, v) (*(pp) = (v))
 /* defined in mknode.c */void maprlist();
-/* defined in mknode.c */NODE * mknode();
+/* defined in mknode.c */NODE * mknode(int, ...);
 NODE * copynode();
-LIST mklist();
+LIST mklist(NODE *, ...);
 LIST copylist();
 LIST addright();
 LIST addleft();

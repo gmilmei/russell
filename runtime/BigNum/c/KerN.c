@@ -36,6 +36,7 @@
 
 #define BNNMACROS_OFF
 #include "BigNum.h"
+#include <string.h>
 
 
                 /*** copyright ***/
@@ -209,7 +210,7 @@ BigNumDigit d;
 {
     /* The C compiler must evaluate the predicate at compile time */
     if (BN_DIGIT_SIZE > BN_WORD_SIZE)
-        return (d >= 1 << BN_WORD_SIZE ? FALSE : TRUE);
+        return (d >= ((BigNumProduct)1 << BN_WORD_SIZE) ? FALSE : TRUE);
     else
 	return (TRUE);
 }
@@ -891,5 +892,3 @@ register int 		nl;
 }
 
 		/***************************************/
-
-

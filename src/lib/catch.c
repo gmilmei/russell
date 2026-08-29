@@ -1,4 +1,6 @@
 # include <signal.h>
+# include <stdio.h>
+# include <stdlib.h>
 # include "mesg.h"
 
 /*
@@ -13,11 +15,13 @@ int sig;           /* the signal caught */
  * Setup signals to be caught
  */
 catchsigs()
-{   extern int catch();
+{   extern void catch();
 
     signal(SIGQUIT, catch);
     signal(SIGILL, catch);
+#ifdef SIGEMT
     signal(SIGEMT, catch);
+#endif
     signal(SIGFPE, catch);
     signal(SIGBUS, catch);
     signal(SIGSEGV, catch);
@@ -32,7 +36,7 @@ catchsigs()
  * Catch a signal, put it in sig, print an error message, then abort().
  * (Note: abort() will flush all io buffers before executing an iot trap).
  */
-catch(i)
+void catch(i)
 int i;
 {
     sig = i;

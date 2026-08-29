@@ -72,7 +72,7 @@ GC_mark_regs()
 	  asm("addq.w &0x4,%sp");	/* put stack back where it was	*/
 #       endif /* M68K HP */
 
-#       if defined(I386) && !defined(OS2) && !defined(SUNOS5)
+#       if defined(I386) && !defined(OS2) && !defined(SUNOS5) && !defined(LINUX)
 	/* I386 code, generic code does not appear to work */
 	/* It does appear to work under OS2, and asms dont */
 	  asm("pushl %eax");  asm("call _GC_tl_mark"); asm("addl $4,%esp");
@@ -83,7 +83,7 @@ GC_mark_regs()
 	  asm("pushl %ebx");  asm("call _GC_tl_mark"); asm("addl $4,%esp");
 #       endif
 
-#       if defined(I386) && defined(SUNOS5)
+#       if defined(I386) && (defined(SUNOS5) || defined(LINUX))
 	/* I386 code, generic code does not appear to work */
 	/* It does appear to work under OS2, and asms dont */
 	  asm("pushl %eax");  asm("call GC_tl_mark"); asm("addl $4,%esp");
@@ -209,4 +209,3 @@ GC_mark_regs()
     asm("	retl");
     asm("	nop");
 # endif
-

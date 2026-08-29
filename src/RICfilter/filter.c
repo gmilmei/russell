@@ -3,6 +3,13 @@
 # define TRACE
 # undef TRACE
 # include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# ifdef USE_SYSTEM_GC
+#   include <gc/gc.h>
+# else
+#   include "../gc/gc.h"
+# endif
 # include "../pass5d/op_codes.h"
 # include "../parm.h"
 # include "RIC.h"
@@ -395,7 +402,7 @@ typedef struct reg_descr * regp;
 
 regp hasht[HASHT_SIZE];
 
-regp lookup();
+regp lookup(int);
 
 /* Invalidate register equivalences and constant information involving r */
 void clear_equiv(r)
@@ -421,7 +428,7 @@ regp r;
 	    if (p -> equiv_reg != r -> this_reg) {
 		fprintf(stderr,
 			"RICfilter: Register equivalence table messed up\n");
-		abort(r,p);
+		abort();
 	    }
 #       endif
 	p -> equiv_reg = NO_REG;
@@ -436,7 +443,7 @@ regp r;
 #           ifdef DEBUG
 	      if ((*t_ptr) -> equiv_reg != r -> equiv_reg) {
 		fprintf(stderr, "RICfilter: bad reg on list\n");
-		abort(*t_ptr, r);
+		abort();
 	      }
 #           endif
 	    /* *t_ptr is the list entry currently being examined */
@@ -453,7 +460,7 @@ regp r;
 	    if (!foundit) {
 	      fprintf(stderr,
 		      "RICfilter: mapped register not on list\n");
-	      abort(r,s);
+	      abort();
 	    }
 #       endif
       }

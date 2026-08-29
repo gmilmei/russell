@@ -15,6 +15,7 @@ extern boolean Oflag;
 extern boolean Nflag;
 
 extern NODE * insrtptr;     /* Root of user program */
+extern boolean calls_callcc();
 
 static boolean surr_loop = FALSE;       /* There is a surrounding loop, */
 					/* w/o intervening function or  */
@@ -47,8 +48,6 @@ NODE **arg;
 		boolean Osurr_loop = surr_loop;
 		boolean nontr_decl = FALSE;
 		boolean contains_closure = FALSE;
-		extern boolean calls_callcc();
-
 		maplist(s, p -> bld_declaration_list, {
 		    if (s -> decl_needed) {
 			/* Will need either act. record or register space */

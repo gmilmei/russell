@@ -28,6 +28,7 @@ SIGNATURE
 #   define YYDEBUG 1
 
 #   include <stdio.h>
+#   include "y.tab.h"
 #   include "parm.h"
 #   include "pass1/applinfer/precedence.h"
 #   include "stree/ststructs.mh"
@@ -1191,4 +1192,3 @@ int list[];
         }
     }
 # endif
-

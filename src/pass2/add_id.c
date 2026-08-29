@@ -29,6 +29,7 @@ static NODE * idnode;
 static NODE ** prevdef_field;
 
 Identry * retrieve();
+static int findfields();
 
 add_id(defnode, scopenode)
 NODE * defnode, * scopenode;

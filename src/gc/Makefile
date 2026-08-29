@@ -9,8 +9,8 @@ SRCS= $(CSRCS) mips_mach_dep.s rs6000_mach_dep.s interface.c gc.h gc_headers.h g
 # the SHELL environment variable.
 SHELL= /bin/sh
 
-CC= cc
-CFLAGS= -O
+CC ?= cc
+CFLAGS= $(PORT_CFLAGS)
 # Setjmp_test may yield overly optimistic results when compiled
 # without optimization.
 
@@ -33,11 +33,8 @@ gc.a: $(OBJS)
 	ranlib gc.a || cat /dev/null
 #	ignore ranlib failure; that usually means it doesn't exist, and isn't needed
 
-mach_dep.o: mach_dep.c mips_mach_dep.s rs6000_mach_dep.s if_mach if_not_there
-	rm -f mach_dep.o
-	./if_mach MIPS "" as -o mach_dep.o mips_mach_dep.s
-	./if_mach RS6000 "" as -o mach_dep.o rs6000_mach_dep.s
-	./if_not_there mach_dep.o $(CC) -c $(SPECIALCFLAGS) mach_dep.c
+mach_dep.o: mach_dep.c
+	$(CC) $(CFLAGS) -c $(SPECIALCFLAGS) mach_dep.c
 
 if_mach: if_mach.c config.h
 	$(CC) $(CFLAGS) -o if_mach if_mach.c

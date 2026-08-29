@@ -145,9 +145,9 @@ typedef union Node {
 @define initfld(pp, v) (*(pp) = (v))
 
 void maprlist();                                /* defined in mknode.c */
-NODE * mknode();							  /* defined in mknode.c */
+NODE * mknode(int, ...);						  /* defined in mknode.c */
 NODE * copynode();
-LIST mklist();
+LIST mklist(NODE *, ...);
 LIST copylist();
 LIST addright();
 LIST addleft();
@@ -314,4 +314,3 @@ cn_sethead(mL__0O, v);
 /* check whether an identifier is declared by a given declaration node */
 @define is_declared_by(id_node, def_node)   \
     ((id_node) -> id_last_definition -> pre_num == (def_node) -> pre_num)
-

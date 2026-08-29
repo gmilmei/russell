@@ -8,7 +8,7 @@
 
 # include <stdio.h>
 
-# include <varargs.h>
+# include <stdarg.h>
 
 # include "ststructs.mh"
 
@@ -100,19 +100,18 @@ NODE *e;
  * If ei is NIL, it is ignored.
  */
 
-LIST mklist( va_alist )
-va_dcl
+LIST mklist(NODE *first, ...)
 {
 va_list lp;
-register unsigned p;
+register NODE *p;
 register NODE *l;
 
-    va_start(lp);
-    p = va_arg(lp, unsigned);
+    va_start(lp, first);
+    p = first;
     l = emptylist();
-    while( p != -1 ) {
+    while( p != (NODE *)-1 ) {
         addright( l, p );
-        p = va_arg(lp, unsigned);
+        p = va_arg(lp, NODE *);
     }
     va_end(lp);
     return ( l );

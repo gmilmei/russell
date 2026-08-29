@@ -16,7 +16,6 @@ extern int next_pre;
 extern int yynerrs;
 
 boolean replace_arg();
-NODE * mknode();
 
 extern unsigned indx_subscr;
 

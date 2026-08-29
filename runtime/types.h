@@ -13,14 +13,14 @@
 
 #define MkIP(hdr) /* static */ struct obj * hdr
 
-#ifdef _STDC_
+#if defined(_STDC_) || defined(__STDC__)
 #  define FVAL(nm) FV_##nm
 #else
 #  define FVAL(nm) FV_/**/nm
 #endif
 
 /* Name of conversion function corresponding to C function nm */
-#ifdef _STDC_
+#if defined(_STDC_) || defined(__STDC__)
 #  define CF(nm) CF_##nm
 #else
 #  define CF(nm) CF_/**/nm
@@ -87,7 +87,7 @@ struct ar {
 #define MkTVAL(nm) \
     struct funcobj *(nm[])
 
-#ifdef _STDC_
+#if defined(_STDC_) || defined(__STDC__)
 #  define VAR(nm) VAR_##nm
 #else
 #  define VAR(nm) VAR_/**/nm

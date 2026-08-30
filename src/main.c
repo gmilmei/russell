@@ -673,8 +673,10 @@ char **argv;
     if (yydebug)
 	prtree(stxtree);
 
+#   ifndef USE_SYSTEM_GC
     GC_dont_gc = FALSE;		/* Garbage collection may be useful during */
 				/* signature checking.                     */
+#   endif
 
 
     /*
@@ -736,7 +738,7 @@ char **argv;
                         exit(1);
 		    }
 		    /* Write &etext to allow checking of compiler version */
-	                putw(&etext, sigfile);
+	                putw((int)(long)&etext, sigfile);
 
 		    /* Copy object file list to signature file */
 		    /* Terminate with empty line               */

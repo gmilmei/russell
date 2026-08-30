@@ -273,8 +273,8 @@ struct obj *opy;    /* val Long */
 
 
   /* Fill in result */
-    (void) BnnAdd(&(result->obj_component[1]), lenr,
-		  &(new_y->obj_component[1]), leny, 0);
+    (void) BnnAdd((BigNum)&(result->obj_component[1]), lenr,
+		  (BigNum)&(new_y->obj_component[1]), leny, 0);
     while (lenr > 1
            && BnGetDigit(result, lenr) 
               == sign_bit(BnGetDigit(result, lenr-1))) {
@@ -415,8 +415,8 @@ struct obj *opy;    /* val Long */
     }
 
   /* Fill in result */
-    (void) BnnSubtract(&(result->obj_component[1]), lenr,
-		       &(new_y->obj_component[1]), leny, 1);
+    (void) BnnSubtract((BigNum)&(result->obj_component[1]), lenr,
+		       (BigNum)&(new_y->obj_component[1]), leny, 1);
     while (lenr > 1
            && BnGetDigit(result, lenr)
               == sign_bit(BnGetDigit(result, lenr-1))) {
@@ -450,8 +450,8 @@ struct obj *opx;    /* val Long */
     struct obj * result = Long_cp(opx, 1);
 
     lenx++;
-    BnnComplement(&(result->obj_component[1]), lenx);
-    BnnAddCarry(&(result->obj_component[1]), lenx, 1);
+    BnnComplement((BigNum)&(result->obj_component[1]), lenx);
+    BnnAddCarry((BigNum)&(result->obj_component[1]), lenx, 1);
     while (lenx > 1
            && BnGetDigit(result, lenx)
               == sign_bit(BnGetDigit(result, lenx-1))) {
@@ -556,12 +556,12 @@ struct obj *nbits;    /* val Long */
 	  /* -nb = nb_in_w mod WORDSZ, 0 <= nb_in_w <= 31 */
 	  if (add_words > 0) {
 	      result->obj_component[add_words] = 
-		BnnShiftRight(&(result->obj_component[add_words + 1]),
+		BnnShiftRight((BigNum)&(result->obj_component[add_words + 1]),
 			      (msw < 0? len+1 : len),
 			      nb_in_w);
 	  } else {
 	    /* discard remainder */
-	      (void) BnnShiftRight(&(result->obj_component[1]),
+	      (void) BnnShiftRight((BigNum)&(result->obj_component[1]),
 				   (msw < 0? nlen+1 : nlen),
 				   nb_in_w);
 	  }
@@ -835,8 +835,8 @@ struct obj *opy;    /* val Short */
 
     /* Fill in result */
 	remainder = 
-	  BnnDivideDigit(&(result->obj_component[1]),
-			 &(result->obj_component[0]), lenx+1, divisor);
+	  BnnDivideDigit((BigNum)&(result->obj_component[1]),
+			 (BigNum)&(result->obj_component[0]), lenx+1, divisor);
 
     /* Adjust lenx to be the true length of the result */
         while (lenx > 1
@@ -1251,8 +1251,8 @@ struct obj *opy;    /* val Short */
 
     /* Compute remainder, filling in quotient as (useless) byproduct */
 	remainder = 
-	  BnnDivideDigit(&(quotient->obj_component[1]),
-			 &(quotient->obj_component[0]), lenx+1, divisor);
+	  BnnDivideDigit((BigNum)&(quotient->obj_component[1]),
+			 (BigNum)&(quotient->obj_component[0]), lenx+1, divisor);
 	rfree(quotient);
 
     /* Free negated dividend and negate remainder if appropriate*/
@@ -1328,8 +1328,8 @@ struct obj *n;
 		    }
 #		endif
 		remainder = 
-		  BnnDivideDigit(&(tmp -> obj_component[tmp_pos+1]),
-				 &(tmp -> obj_component[tmp_pos]),
+		  BnnDivideDigit((BigNum)&(tmp -> obj_component[tmp_pos+1]),
+				 (BigNum)&(tmp -> obj_component[tmp_pos]),
 				 tmp_len, divisor);
 		/* The tmp_len-1 st digit should always be 0 */
 		/* Make sure that there is never more than one leading 0 */

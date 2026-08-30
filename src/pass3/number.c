@@ -6,7 +6,7 @@
 
 # include "stree/stplinks.mh"
 
-int next_pre; next_post;   /* next pre- and post-order numbers to be */
+int next_pre, next_post;   /* next pre- and post-order numbers to be */
                                   /* assigned.                              */
 
 /* Number the subtree headed by p */

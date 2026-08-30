@@ -202,11 +202,11 @@ struct ar * A;
 
     array_var = A -> ar_arg1;
     index = A -> ar_arg2;
-    if( (short)index < 0 
-	|| (short)index >= array_var -> obj_component[0] ) {
-	Array_error((short)index);
+    if( (short)(long)index < 0
+	|| (short)(long)index >= array_var -> obj_component[0] ) {
+	Array_error((short)(long)index);
     }
-    return((struct obj *) (array_var -> obj_component[((short)index) + 1]));
+    return((struct obj *) (array_var -> obj_component[((short)(long)index) + 1]));
 }
 
 Array_error(index)

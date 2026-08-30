@@ -132,7 +132,7 @@ FILE *Soutfile;
 #           endif
             break;
         case GLOBALREP:
-            putw(p -> id_last_definition, Soutfile);
+            putw((int)(long)(p -> id_last_definition), Soutfile);
 #           ifdef TRACE_DECL
 		printf(" (global)\n");
 #           endif

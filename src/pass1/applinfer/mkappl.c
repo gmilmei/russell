@@ -26,6 +26,7 @@ NODE * l;
 {   Array *  array;      /* array of pointers to primaries */
     NODE *  tree,       /* the result tree */
          *  sl;         /* a singleton list containing the tree */
+    extern NODE *mkappl2();
 
 #   ifdef DEBUG
         if ( !is_list(l) || is_empty(l) ) {

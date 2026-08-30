@@ -156,7 +156,26 @@ int nlibraries = 0;      /* number of valid entries on libraries */
 
 char * malloc();
 
-int intr_handler();
+void intr_handler();
+
+static void quit_handler(sig)
+int sig;
+{
+    exit(0);
+}
+
+static char *make_temp_name(template)
+char *template;
+{
+    int fd = mkstemp(template);
+
+    if (fd < 0) {
+        perror("mkstemp");
+        exit(1);
+    }
+    close(fd);
+    return(template);
+}
 
 /* Add a copy of the file name ofile to the list of object files to be loaded */
 void add_objfile(ofile)
@@ -196,7 +215,6 @@ char * codefilename;
 char * main_out_fname;
 
 char * outfilename();
-char * mktemp();
 
 boolean dloadflag = FALSE;  /* generate a demand loadable initialized */
                             /* compiler.                              */
@@ -212,7 +230,7 @@ char **argv;
     int argn;
 
     /* If quit is sent, just exit (w/o core dump). */
-        signal(SIGQUIT, exit);
+        signal(SIGQUIT, quit_handler);
 
     /* Clean up after SIGINT */
         signal(SIGINT, intr_handler);
@@ -462,14 +480,14 @@ char **argv;
     }
 
     /* Generate temp file names */
-	rctmp0name = mktemp(rctmp0template);
-	rctmp1name = mktemp(rctmp1template);
-	rctmp2name = mktemp(rctmp2template);
+		rctmp0name = make_temp_name(rctmp0template);
+		rctmp1name = make_temp_name(rctmp1template);
+		rctmp2name = make_temp_name(rctmp2template);
 	if (Gflag & Oflag) {
-	  rctmp4name = mktemp(rctmp4template);
+		  rctmp4name = make_temp_name(rctmp4template);
 	}
 	if (OOflag) {
-	  rctmp3name = mktemp(rctmp3template);
+		  rctmp3name = make_temp_name(rctmp3template);
 	}
 
     /* Remove old object file list */
@@ -591,11 +609,12 @@ char **argv;
         FILE * objfilelist  = fopen(OBJFILELIST, "r");
         char namebuf[MAXFILELEN+1];
         int len;
-        int retcode;
+        char *retcode;
 
         if (objfilelist != NULL) {
             while (!feof(objfilelist)) {
-                retcode = (int) fgets(namebuf, MAXFILELEN, objfilelist);
+                retcode = fgets(namebuf, MAXFILELEN, objfilelist);
+                if (retcode == NULL) break;
                 /* delete trailing newline */
                   {
                     len = strlen(namebuf);
@@ -603,7 +622,7 @@ char **argv;
                       namebuf[--len] = 0;
                     }
                   }
-                if (retcode != NULL && len != 0) {
+                if (len != 0) {
                     add_objfile(namebuf);
                 }
             }
@@ -1082,7 +1101,8 @@ rmfiles()
 /*
  * handler for interrupt signal
  */
-intr_handler()
+void intr_handler(sig)
+int sig;
 {
     rmfiles();
     exit(1);

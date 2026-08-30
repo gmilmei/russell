@@ -276,7 +276,7 @@ MkFVAL1(Short_to_ChStr);
 MkIP(ChStr_to_Short(s))
 register struct obj *s;
 {
-    return( (struct obj *)(((char *)(s->obj_component))[0]) );
+    return( (struct obj *)(long)(((char *)(s->obj_component))[0]) );
 }
 
 MkFVAL1(ChStr_to_Short);
@@ -288,7 +288,7 @@ struct obj * ChStr_unchecked_Dot(s,i)
 register struct obj *s;   
 register long i;          
 {                         
-    return( (struct obj *)(((char *)(s->obj_component))[i]) );
+    return( (struct obj *)(long)(((char *)(s->obj_component))[i]) );
 }
 
 void ChStr_check_Dot(s,i)
@@ -312,7 +312,7 @@ register struct obj *s;
 register long i;
 {
     ChStr_check_Dot(s,i);
-    return( (struct obj *)(((char *)(s->obj_component))[i]) );
+    return( (struct obj *)(long)(((char *)(s->obj_component))[i]) );
 }
 
 MkFVAL2(ChStr_Dot);

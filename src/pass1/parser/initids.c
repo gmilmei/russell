@@ -61,7 +61,7 @@ int     pend[NLEVELS];   /* pend[n] = last string table entry with precedence */
 sttrelptr indx_Boolean,
 	  indx_Void,
 	  indx_true,
-	  indx_false;
+	  indx_false,
 	  indx_simple,
 	  indx_Null,
 	  indx_Mk;
@@ -244,4 +244,3 @@ initids()
 
         yyvline = 0;
 }
-

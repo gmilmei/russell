@@ -58,7 +58,7 @@ register int vln;
 #   endif
 }
 
-char *
+int
 getfn()
 {
 #   ifdef DEBUG
@@ -81,5 +81,4 @@ getrl()
 
     return( (vrptr -> vr_rline) + (lastvl - (vrptr -> vr_vline)) );
 }
-
 

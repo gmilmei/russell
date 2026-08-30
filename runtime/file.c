@@ -126,7 +126,7 @@ MkIP(File_Writeb(f, c))
 struct obj * f;
 struct obj * c;
 {
-    putc((char) c, (FILE *)f);
+    putc((char)(long)c, (FILE *)f);
     return(c);
 }
 

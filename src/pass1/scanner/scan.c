@@ -31,10 +31,10 @@ struct restab {
  * reserved word tables
  */
 
-struct restab residtab[];
+extern struct restab residtab[31];
 int nresids;
 
-struct restab resoptab[];
+extern struct restab resoptab[6];
 int nresops;
 
 /*
@@ -42,7 +42,7 @@ int nresops;
  * and macro to find character class
  */
 
-int cctab[];
+extern int cctab[128];
 
 # define CCLASS(c) ((c) == EOF ? EOFCC : cctab[c])
 
@@ -57,7 +57,7 @@ char * yyinfnm;
 
 int yydebug;
 
-int yylval;
+void *yylval;
 
 /* declarations for table of virtual line numbers versus real line
  * numbers and filenames. The table is created by the scanner and
@@ -175,7 +175,7 @@ retry:
         }
         *p++ = '\0';
         outtok = WORDID;
-        yylval = stt_enter(tokenbuf,p-tokenbuf);
+        yylval = (void *)(long)stt_enter(tokenbuf,p-tokenbuf);
         break;
       }
 
@@ -431,7 +431,7 @@ register char * this_entry;
     if( strcmp(tbl[l].rt_txt,tokenbuf) == 0 )
       return( tbl[l].rt_val );
     else {
-      yylval = stt_enter( tokenbuf, tokenlgth );
+      yylval = (void *)(long)stt_enter( tokenbuf, tokenlgth );
       return( dflt );
     }
 }
@@ -450,4 +450,3 @@ int tok;
     yyperror("Compiler Error: scanner stack overflow");
 
 }
-

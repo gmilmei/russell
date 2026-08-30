@@ -108,8 +108,7 @@ int dummy() { }
 /* Return a pointer to somewhere in get_sp's act. record */
 word * get_sp()
 {
-    word a;
-    return(&a);
+    return((word *)__builtin_frame_address(0));
 }
 
 # ifdef SPARC
@@ -307,7 +306,11 @@ int sig_num;
         }
     } else {
         /* We don't want this signal to be held anymore */
-            sigsetmask(0);
+	    {
+		sigset_t empty_set;
+		sigemptyset(&empty_set);
+		sigprocmask(SIG_SETMASK, &empty_set, (sigset_t *)0);
+	    }
 	/* Call _continuation with argument of true and ep = ce */
 	    act_record[0] = (unsigned) ce;	/* ar ptr is ce		*/
 	    act_record[1] = 1;			/* 1st arg is True	*/

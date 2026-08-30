@@ -337,7 +337,7 @@ ManifestSignature :
 	    yywarn("Compiler directive outside initialization");
 	  }
 	  $$ = mknode(TYPESIGNATURE,$11,$13,$5,$6,$7,$9);
-	  $$ -> ts_string_max = atoi($8);
+	  $$ -> ts_string_max = atoi((char *)$8);
 	  $$ -> ts_simple_type = (int)$3;
 	}
     | TYPE '(' Opt.Simple CONSTANTS QSTRING QSTRING QSTRING UQSTRING ')'
@@ -347,7 +347,7 @@ ManifestSignature :
 	    yywarn("Compiler directive outside initialization");
 	  }
 	  $$ = mknode(TYPESIGNATURE,$10,$12,$5,$6,$7,NIL);
-	  $$ -> ts_string_max = atoi($8);
+	  $$ -> ts_string_max = atoi((char *)$8);
 	  $$ -> ts_simple_type = (int)$3;
 	}
     | TYPE '(' Opt.Simple CONSTANTS QSTRING QSTRING QSTRING ')'
@@ -425,7 +425,7 @@ Special :
 	    yywarn("Compiler directive outside initialization");
 	  }
 	  if ($2 -> id_str_table_index == indx_standard) {
-	    int num_arg = atoi($4);
+	    int num_arg = atoi((char *)$4);
 
 	    if ($3 -> id_str_table_index == indx_New) {
 		$$ = (NodeStar)special(STD_NEW, num_arg);
@@ -721,7 +721,7 @@ Denotation.seq :
 			case ELSE:
                         case OD:
                         case ')':
-                        case 'NI':
+                        case NI:
                         case '}':
                             yyunlex(c);
                             break;
@@ -1005,7 +1005,7 @@ WithList :
     ;
 ExportList :
     Start.ExportList Opt.Id '{' ExportElement.list '}' =
-	{ $$ = mknode($1,$2,$4);  }
+	{ $$ = mknode((int)$1,$2,$4);  }
     | EXPORT error
 	{ yyperror("Error in \"export\" type modification"); }
     | HIDE error

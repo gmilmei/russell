@@ -20,7 +20,8 @@ clean:
 # - the order of the following probably matters, even though it shouldn't:
 ifdef PORT_CORE_ONLY
 all: $(RROOT)/fixmacros $(RROOT)/fixstrings $(RROOT)/rc Rc \
-RICfilter/filter delab/delab RIC_to_C/to_C $(RROOT)/runtime/rrt0.o
+RICfilter/filter delab/delab RIC_to_C/to_C $(RROOT)/runtime/rrt0.o \
+$(RROOT)/rhelp
 else
 all: $(RROOT)/fixmacros $(RROOT)/fixstrings $(RROOT)/rc rc.x Grc.x \
 RICfilter/filter delab/delab RIC_to_C/to_C $(RROOT)/runtime/rrt0.o $(RROOT)/rhelp \
@@ -75,9 +76,9 @@ $(RROOT)/runtime/rrt0.o:
 	cd $(RROOT)/runtime; make
 	
 # -- help utility
-$(RROOT)/rhelp: rc.x $(RROOT)/rc rhelp.r inenv.o root_path.h RICfilter/filter \
-RIC_to_C/to_C $(RROOT)/runtime/rrt0.o
-	$(RROOT)/rc -pN rhelp.r inenv.o; mv a.out $(RROOT)/rhelp
+$(RROOT)/rhelp: Rc $(RROOT)/rc rhelp.r inenv.o RICfilter/filter \
+RIC_to_C/to_C delab/delab $(RROOT)/runtime/rrt0.o root_path.h
+	$(RROOT)/rc -pNC rhelp.r inenv.o; mv a.out $(RROOT)/rhelp
 	echo "move $(RROOT)/rhelp to somewhere on your path"
 
 inenv.o: inenv.c

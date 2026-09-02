@@ -24,4 +24,4 @@ clean-port:
 clean: clean-port
 	$(MAKE) -C src -f Makefile.main clean RROOT=$(CURDIR)
 	$(MAKE) -C runtime clean
-	rm -f rc fixmacros fixstrings a.out
+	rm -f rc rhelp fixmacros fixstrings a.out

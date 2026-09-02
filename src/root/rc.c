@@ -515,7 +515,15 @@ char **argv;
                 fprintf(stderr, "Cannot create %s\n", rctmp0name);
                 exit(1);
             }
+#           ifdef USE_ELF_COLD_START
+            /* Historical cpp recognized directives only in column 1.
+             * GNU cpp needs traditional mode to leave indented Russell
+             * conditional alternatives ("# ...") untouched. */
+            execl(ppname, "cpp", "-traditional-cpp", appflags,
+                  argv[argf], 0 );
+#           else
             execl(ppname, "cpp", appflags, argv[argf], 0 );
+#           endif
             /* exit */
 
             fprintf(stderr, "Can't exec preprocessor\n");

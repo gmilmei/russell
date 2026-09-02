@@ -1465,14 +1465,14 @@ char **argv;
 	/* wait system call.                                          */
 	    if (profile) {
 #ifdef USE_ELF_COLD_START
-		execl(CC, "cc", "-m32", "-std=gnu89", "-fcommon", "-fno-pie",
+		execl(CC, "cc", "-m32", "-std=gnu89", "-fcommon", "-fno-pie", "-fno-builtin",
 		      "-S", Oflag? "-O" : "-g", "-p", "-o", sfile, Cfile, 0);
 #else
 		execl(CC, "cc", "-S", Oflag? "-O" : "-g" , "-p", "-o", sfile, Cfile, 0);
 #endif
 	    } else {
 #ifdef USE_ELF_COLD_START
-		execl(CC, "cc", "-m32", "-std=gnu89", "-fcommon", "-fno-pie",
+		execl(CC, "cc", "-m32", "-std=gnu89", "-fcommon", "-fno-pie", "-fno-builtin",
 		      "-S", Oflag? "-O" : "-g", "-o", sfile, Cfile, 0);
 #else
 		execl(CC, "cc", "-S", Oflag? "-O" : "-g" , "-o", sfile, Cfile, 0);

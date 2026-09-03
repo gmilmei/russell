@@ -95,9 +95,7 @@ example suite is the acceptance criterion for the completed port.
 - Added `make check-abi` to reject incompatible data models early.
 - Verified that the host toolchain can compile and link ELF32/i386 programs.
 - Disabled the host's read-only ccache for deterministic local builds.
-- Run target programs through `qemu-i386` by default.  Native ELF32 execution
-  is blocked by the development sandbox's syscall filter; native i386 Linux
-  builders can override this with `make I386_RUNNER= check-abi`.
+- Run target programs natively on the Linux/i386 host.
 
 ### Phase 2
 
@@ -114,9 +112,8 @@ example suite is the acceptance criterion for the completed port.
 - Switched the Linux reference build to the system Boehm GC (`gc-devel.i686`)
   through `USE_SYSTEM_GC`; the bundled collector remains in the source tree
   but is no longer part of the default dependency graph.
-- Ported the BigNum C32 declarations for current GCC, preserved i386 flags in
-  its recursive build, and passed the complete `testKerN` and `bztest` suites
-  under `qemu-i386`.
+- Ported the BigNum C32 declarations for current GCC and preserved i386 flags
+  in its recursive build.
 - Built the complete runtime into an ELF32 relocatable `runtime/rrt0.o`.
 - Made `BigNumProduct` explicitly 64-bit so 32-by-32-bit arithmetic does not
   rely on undefined full-width shifts on the i386 ABI.

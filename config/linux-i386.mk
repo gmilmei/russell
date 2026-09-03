@@ -4,7 +4,6 @@
 CC := env CCACHE_DISABLE=1 gcc
 LD := ld
 AR := ar
-I386_RUNNER ?= qemu-i386
 
 CPPFLAGS := -D_GNU_SOURCE -DUSE_SYSTEM_GC -DUSE_ELF_COLD_START
 CFLAGS := -m32 -std=gnu89 -O0 -g -fcommon -fno-pie \

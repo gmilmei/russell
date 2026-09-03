@@ -1,7 +1,5 @@
 # Russell Compiler 3.3 for Linux
 
-[Deutsche Fassung](README.de.md)
-
 This repository contains the historical Russell Compiler 3.3 and a port to
 Linux/i386. The compiler produces 32-bit ELF programs and uses the system's
 Boehm garbage collector.
@@ -17,19 +15,12 @@ The port requires an x86 Linux environment with 32-bit development files:
 - GNU Make, GCC, and Binutils
 - the 32-bit C library and GCC runtime
 - Boehm GC with its 32-bit development files
-- `qemu-i386` or native support for Linux i386 programs
+- native support for Linux i386 programs
 
 On Fedora, the required packages can be installed with:
 
 ```sh
-sudo dnf install gcc make binutils glibc-devel.i686 libgcc.i686 gc-devel.i686 qemu-user
-```
-
-QEMU is not required on a system that can run ELF32/i386 programs natively.
-On such a system, run the ABI check without a runner:
-
-```sh
-make I386_RUNNER=
+sudo dnf install gcc make binutils glibc-devel.i686 libgcc.i686 gc-devel.i686
 ```
 
 ## Building
@@ -77,12 +68,6 @@ The simplest invocation compiles and links a source file as `a.out`:
 ```
 
 The example repeatedly asks for a number. It prints `120` for the input `5`.
-On a machine without native i386 execution, run the resulting program through
-QEMU:
-
-```sh
-qemu-i386 ./a.out
-```
 
 Use `-o` to select an output name:
 

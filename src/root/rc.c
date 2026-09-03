@@ -519,10 +519,18 @@ char **argv;
             /* Historical cpp recognized directives only in column 1.
              * GNU cpp needs traditional mode to leave indented Russell
              * conditional alternatives ("# ...") untouched. */
-            execl(ppname, "cpp", "-traditional-cpp", appflags,
-                  argv[argf], 0 );
+            if (appflags[1] == '\0') {
+                execl(ppname, "cpp", "-traditional-cpp", argv[argf], 0);
+            } else {
+                execl(ppname, "cpp", "-traditional-cpp", appflags,
+                      argv[argf], 0);
+            }
 #           else
-            execl(ppname, "cpp", appflags, argv[argf], 0 );
+            if (appflags[1] == '\0') {
+                execl(ppname, "cpp", argv[argf], 0);
+            } else {
+                execl(ppname, "cpp", appflags, argv[argf], 0);
+            }
 #           endif
             /* exit */
 

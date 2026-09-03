@@ -95,8 +95,8 @@ Grc.x: Rc Ginitenv.r
 Rc:     PRc main.o
 	$(CC) $(PORT_CFLAGS) -o Rc main.o PRc $(GC_LIBS)
 
-PRc:    stree/stree.o pass1/pass1.o pass2/pass2.o pass3/pass3.o pass4/pass4.o pass5c/pass5c.o pass5d/pass5d.o datatypes/datatypes.o lib/catch.o vr.o sigio/sig_in.o sigio/sig_out.o parmhflag
-	$(LD) -r $(REL_LDFLAGS) -o PRc  stree/stree.o pass1/pass1.o pass2/pass2.o pass3/pass3.o pass4/pass4.o pass5c/pass5c.o pass5d/pass5d.o datatypes/datatypes.o lib/catch.o sigio/sig_in.o sigio/sig_out.o vr.o
+PRc:    stree/stree.o pass1/pass1.o pass2/pass2.o pass3/pass3.o pass4/pass4.o pass5c/pass5c.o pass5d/pass5d.o datatypes/datatypes.o lib/catch.o vr.o sigio/sig_in.o sigio/sig_out.o sigio/ri_io.o parmhflag
+	$(LD) -r $(REL_LDFLAGS) -o PRc  stree/stree.o pass1/pass1.o pass2/pass2.o pass3/pass3.o pass4/pass4.o pass5c/pass5c.o pass5d/pass5d.o datatypes/datatypes.o lib/catch.o sigio/sig_in.o sigio/sig_out.o sigio/ri_io.o vr.o
 
 main.o: $(stinclfiles)
 

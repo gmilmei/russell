@@ -215,6 +215,7 @@ char * codefilename;
 char * main_out_fname;
 
 char * outfilename();
+char * interface_filename();
 
 boolean dloadflag = FALSE;  /* generate a demand loadable initialized */
                             /* compiler.                              */
@@ -587,12 +588,12 @@ char **argv;
 	      execl(fullrcname, "Rc", argv[argf],
                     apmnflags, pflag? rctmp0name : argv[argf],
 		    main_out_fname,
-		    rctmp2name, rctmp3name, 0 );
+		    interface_filename(argv[argf]), rctmp3name, 0 );
 	    } else if (cflag) {
 	      execl(fullrcname, "Rc", argv[argf],
                     apmnflags, pflag? rctmp0name : argv[argf],
 		    main_out_fname,
-                    rctmp2name, 0 );
+		    interface_filename(argv[argf]), 0 );
 	    } else if (OOflag) {
 	      execl(fullrcname, "Rc", argv[argf],
                     apmnflags, pflag? rctmp0name : argv[argf],
@@ -911,7 +912,9 @@ char **argv;
               fprintf(stderr, "Linking failed\n");
               printstatus(status);
             }
-	} else if (cflag) {
+	}
+#           ifndef USE_ELF_COLD_START
+	else if (cflag) {
 	  /* append signature and optimization information to end of .o file */
             FILE * rctmp2 = fopen(rctmp2name,"r");
 	    FILE * ofile = fopen(outfilename(argv[argf], 'o'), "r+");
@@ -994,6 +997,7 @@ char **argv;
             fclose(ofile);
             fclose(rctmp2);
         }
+#           endif
     }
 
     if (Cflag) {
@@ -1040,6 +1044,23 @@ char * result;
 	sprintf(result, "a.%c", x);
     }
     return(result);
+}
+
+/* Convert a ___.r file name into the corresponding Russell interface name. */
+char *interface_filename(str)
+char *str;
+{
+    int len = strlen(str);
+    char *result = (char *)malloc(len + 4);
+
+    strcpy(result, str);
+    if (len >= 2 && result[len - 2] == '.' && result[len - 1] == 'r') {
+        result[len - 1] = '\0';
+        strcat(result, "ri");
+    } else {
+        strcat(result, ".ri");
+    }
+    return result;
 }
 
 

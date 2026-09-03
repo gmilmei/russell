@@ -94,7 +94,8 @@ Use `-o` to select an output name:
 ## Useful options
 
 - `-S`: produce assembly, but do not assemble or link it
-- `-c`: produce an object file, but do not link an executable
+- `-c`: produce a separately linkable object file and Russell interface file,
+  but do not link an executable
 - `-G`: produce only Russell Intermediate Code in a `.G` file
 - `-O`: enable the historical local optimizer
 - `-o NAME`: select the name of the linked output file
@@ -103,12 +104,16 @@ Examples:
 
 ```sh
 ./rc -S examples/fact.r       # produces examples/fact.s
-./rc -c examples/fact.r       # produces examples/fact.o
+./rc -c examples/fact.r       # produces examples/fact.o and examples/fact.ri
 ./rc -G examples/fact.r       # produces examples/fact.G
 ```
 
 Static optimization with `-OO`, demand loading, and the old direct machine-code
 backends are not part of the current Linux port.
+
+For a separately compiled Russell module, keep its `.o` and `.ri` files
+together.  An `extern {"module"}` declaration reads `module.ri` for the
+signature and links `module.o` automatically.
 
 ## Cleaning
 

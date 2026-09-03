@@ -1,4 +1,5 @@
 # include "parm.h"
+# include "sigio/ri_io.h"
 # include "stree/ststructs.mh"
 # include <a.out.h>
 # include <stdio.h>
@@ -61,6 +62,27 @@ char ** argv;
 	fprintf(stderr, "Couldn't open %s\n", fn);
 	exit(1);
     } else {
+#     ifdef USE_ELF_COLD_START
+	char line[1000];
+	long compiler_marker;
+
+	if (ri_read_header(obj_file) || ri_read_word(obj_file, &compiler_marker)) {
+	    fprintf(stderr, "%s is not a Russell interface file\n", fn);
+	    exit(1);
+	}
+	while (fgets(line, sizeof line, obj_file) != NULL && line[0] != '\n') ;
+	if (feof(obj_file)) {
+	    fprintf(stderr, "%s has a truncated Russell interface\n", fn);
+	    exit(1);
+	}
+	sig = sig_in(obj_file, fn);
+	unparse_file = stdout;
+	printf("Signature:\n\t");
+	unparse(sig);
+	printf("\n");
+	fclose(obj_file);
+	exit(0);
+#     else
 	long strsize;
 	struct exec header;
 	unsigned long optsize;
@@ -143,6 +165,7 @@ char ** argv;
 	    prtree(sig);
 	}
 	fclose(obj_file);
+#     endif
     }
     exit(0);
   Usage:

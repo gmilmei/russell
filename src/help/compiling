@@ -27,15 +27,19 @@ compiler, or used to change the initial environment in which user programs
 run.  The only options of any real use to the programmer are the following.
 The "p", "L", and "c" options are most frequently used.
 
-    -c  This is a partial compilation.  Produce a .o file with appended
-        signature information.  Do not link the result with the runtime
+    -c  This is a partial compilation.  Produce a .o file and a matching
+        .ri interface file containing signature information.  Do not link
+        the result with the runtime
         library.  The filename is used to generate labels, including that
         of the entry point.  Thus files which will eventually be linked
 	together must have had distinct names when they were compiled.
 	They should also not be moved into differently named files.
 	(They may be moved between directories.)
 
-        An object file produced in this way can be referred to by another
+	The .o and .ri files produced in this way must be kept together.  The
+	interface file is read by another Russell compilation, which then links
+	the matching object file automatically.  A module can be referred to by
+	another
         Russell program as 
 
 		extern { "filename_without_extension" }
@@ -210,4 +214,3 @@ Notes: ".objfilelist" contains those routines which actually need to be linked.
   since it has no information about the context in which the function will
   be used.  Much of the resulting code may never get used.  (In fact the
   whole object file may never get linked with the main program.)
-

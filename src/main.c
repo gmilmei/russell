@@ -110,6 +110,7 @@ char copyright3[] = "This material is provided as is, with no warranty expressed
 #   include <a.out.h>
 # endif
 # include "parm.h"
+# include "sigio/ri_io.h"
 # include "arith.h"
 
 typedef long NODE;          /* Not really, but dont want to include */
@@ -737,8 +738,17 @@ char **argv;
                         fprintf(stderr, "Can't open %s\n", sigfname);
                         exit(1);
 		    }
-		    /* Write &etext to allow checking of compiler version */
+		    /* Write a portable interface header and the historical
+		     * compiler-instance marker in canonical text form. */
+#                   ifdef USE_ELF_COLD_START
+	                if (ri_write_header(sigfile) ||
+	                    ri_write_word(sigfile, (long)&etext)) {
+	                    fprintf(stderr, "Can't write Russell interface %s\n", sigfname);
+	                    exit(1);
+	                }
+#                   else
 	                putw((int)(long)&etext, sigfile);
+#                   endif
 
 		    /* Copy object file list to signature file */
 		    /* Terminate with empty line               */

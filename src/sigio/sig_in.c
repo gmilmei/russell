@@ -13,6 +13,7 @@
 # include "parm.h"
 # include <stdio.h>
 # include <a.out.h>
+# include "sigio/ri_io.h"
 # include "stree/ststructs.mh"
 # include "pass3/is_local.h"
 # define FMTERR 7  /* exit code if file contents dont look like syntax tree */
@@ -100,37 +101,22 @@ extern char tokenbuf[1000]; /* used as string temporary */
 char * get_string(Sinfile)
 FILE * Sinfile;
 {
-    int len = 0;
-    char c;
-    char * result;
+    char *result;
 
-    while((c = getc(Sinfile)) != 0) {
-        if (ferror(Sinfile) || feof(Sinfile) || len >= (sizeof tokenbuf)-1) {
-	    fprintf(stderr, FMTMSG, Sinf_name);
-#           ifdef TRACE
-              printf("bad string\n");
-              abort();
-#           endif
-            exit(FMTERR);
-        }
-        tokenbuf[len++] = c;
+    if (ri_read_string(Sinfile, &result)) {
+        fprintf(stderr, FMTMSG, Sinf_name);
+        exit(FMTERR);
     }
-    tokenbuf[len] = 0;
-    if (len == 1 && tokenbuf[0] == '\377') {
-        return(NIL);
-    }
-    result = (char *)malloc(len+1);
-    strcpy(result, tokenbuf);
-    return(result);
+    return result;
 }
 
 /* Read a word from Sinfile, and check for errors */
 int readw(Sinfile)
 FILE * Sinfile;
 {
-    int result;
+    long result;
 
-    if (ferror(Sinfile) || feof(Sinfile)) {
+    if (ri_read_word(Sinfile, &result)) {
 	fprintf(stderr, FMTMSG, Sinf_name);
 #       ifdef TRACE
           printf("readw: read error\n");
@@ -138,16 +124,7 @@ FILE * Sinfile;
 #       endif
         exit(FMTERR);
     }
-    result = getw(Sinfile);
-    if (ferror(Sinfile)) {
-	fprintf(stderr, FMTMSG, Sinf_name);
-#       ifdef TRACE
-          printf("readw: read error\n");
-          abort();
-#       endif
-        exit(FMTERR);
-    }
-    return(result);
+    return (int)result;
 }
 
 /* Identifiers are written out as
@@ -218,29 +195,21 @@ int kindno;
 #   endif
     /* Read identifier name */
     {
-      int len = 0;
-      char c;
+      char *name;
 
-      while((c = getc(Sinfile)) != 0) {
-          if (ferror(Sinfile) || feof(Sinfile) || len >= (sizeof tokenbuf)-1) {
-	      fprintf(stderr, FMTMSG, Sinf_name);
-#             ifdef TRACE
-                printf("error reading id name \n");
-                abort();
-#             endif
-              exit(FMTERR);
-          }
-          tokenbuf[len++] = c;
+      if (ri_read_string(Sinfile, &name) || name == NIL) {
+	  fprintf(stderr, FMTMSG, Sinf_name);
+          exit(FMTERR);
       }
-      tokenbuf[len] = 0;
-      if (len == 0) {
+      if (*name == '\0') {
           string_index = -1;
       } else {
 #         ifdef TRACE
-	      printf("getname: read identifier name: %s\n", tokenbuf);
+	      printf("getname: read identifier name: %s\n", name);
 #         endif
-          string_index = stt_enter(tokenbuf, len+1);
+          string_index = stt_enter(name, strlen(name)+1);
       }
+      free(name);
     }
     result = mknode(kindno, string_index);
     result -> id_last_definition = last_def;
@@ -331,18 +300,51 @@ char *fn;
 	}
     }
 
-  ext_fname = (char *) malloc(name_length+3);
+  ext_fname = (char *) malloc(name_length+4);
   /* build file name */
     strcpy(ext_fname, fn);
     ext_fname[name_length] = '.';
+# ifdef USE_ELF_COLD_START
+    ext_fname[name_length+1] = 'r';
+    ext_fname[name_length+2] = 'i';
+    ext_fname[name_length+3] = 0;
+# else
     ext_fname[name_length+1] = 'o';
     ext_fname[name_length+2] = 0;
+# endif
           /* Get and fill in signature info */
     if ((extern_file = fopen(ext_fname, "r")) == NULL) {
       fprintf(stderr, "Couldn't open %s\n", ext_fname);
       yyperror("Cant open external Russell object file");
       result = mknode (REXTERNDEF, NIL, NIL);
     } else {
+# ifdef USE_ELF_COLD_START
+      extern char str_code_buf[];
+      char *ip;
+      int ic;
+      extern void add_objfile();
+
+      if (ri_read_header(extern_file) ||
+          (char *)(long)readw(extern_file) != &etext) {
+        fprintf(stderr, "Outdated or invalid Russell interface %s\n", ext_fname);
+        exit(1);
+      }
+      do {
+        ip = str_code_buf;
+        do {
+          ic = getc(extern_file);
+          if (ic == '\n') *ip = '\0';
+          else if (ic == EOF || ip >= str_code_buf + MAXSTRCODELEN - 1) {
+            fprintf(stderr, "%s has bad format\n", ext_fname);
+            exit(1);
+          } else *ip++ = ic;
+        } while (ic != '\n');
+        if (ip != str_code_buf) add_objfile(str_code_buf);
+      } while (ip != str_code_buf);
+      result = sig_in(extern_file, ext_fname);
+      fclose(extern_file);
+      goto interface_loaded;
+# endif
       unsigned long strsize;
       struct exec header;
       extern FILE * optfile;
@@ -435,6 +437,7 @@ char *fn;
 
       fclose(extern_file);
     }
+interface_loaded:
   free(ext_fname);
   /* Add result to file_sigs list */
     p = (struct File_Sigs *) malloc(sizeof (struct File_Sigs));
@@ -649,7 +652,7 @@ int kindno;
 		    spcl = readw(Sinfile);
 		    result = mknode(FUNCSIGNATURE,
 				    (Gflag?
-				       (char *) get_RIC(Sinfile)
+			       (char *) ri_get_RIC(Sinfile)
 				       	  /* in-line code */
 				     : get_string(Sinfile)),
 				    NIL, NIL);

@@ -15,8 +15,11 @@
 
 # include "parm.h"
 # include <stdio.h>
+# include "sigio/ri_io.h"
 # include "stree/ststructs.mh"
 # include "pass3/is_local.h"
+
+# define putw(value, file) ri_write_word((file), (long)(value))
 
 extern boolean Gflag;
 
@@ -69,12 +72,7 @@ put_string(Soutfile, s)
 FILE * Soutfile;
 char * s;
 {
-    if (s == NIL) {
-        putc(0xff, Soutfile);
-    } else {
-        fputs(s, Soutfile);
-    }
-    putc(0, Soutfile);
+    ri_write_string(Soutfile, s);
 }
 
 /* Identifiers are written out as
@@ -153,7 +151,7 @@ FILE *Soutfile;
 #   endif
     if (string_index == -1) {
         /* local type id is represented as empty string */
-        putc(0, Soutfile);
+        put_string(Soutfile, "");
     } else {
         put_string(Soutfile, getname(string_index));
     }
@@ -345,7 +343,7 @@ register NODE * v;
                 putw(FUNCSIGNATURE, Soutfile);
 		putw(p -> fsig_special, Soutfile);
 		if (Gflag) {
-		    put_RIC(p -> fsig_inline_code, Soutfile);
+	    ri_put_RIC(p -> fsig_inline_code, Soutfile);
 		} else {
 		    put_string(Soutfile, p -> fsig_inline_code);
 		}

@@ -4,6 +4,7 @@
 #include "../parm.h"
 #include "op_codes.h"
 #include "codegen.h"
+#include "sigio/ri_io.h"
 
 #define OCLENGTH 9  /* maximum length of mnemonics */
 
@@ -178,6 +179,27 @@ FILE * f;
     putc(0,f);
 }
 
+/* Write a RIC sequence using the canonical Russell interface format. */
+ri_put_RIC(seq, f)
+struct RIC_instr * seq;
+FILE * f;
+{
+    struct RIC_instr *current;
+
+    for (current = seq; current != (struct RIC_instr *)0;
+         current = current -> next_instr) {
+        if (ri_write_word(f, current -> op_code) ||
+            ri_write_word(f, current -> label_arg) ||
+            ri_write_word(f, current -> n_args)) return -1;
+        if (current -> label_arg) {
+            if (ri_write_string(f, current -> label)) return -1;
+        } else if (ri_write_word(f, current -> arg[0]) ||
+                   ri_write_word(f, current -> arg[1]) ||
+                   ri_write_word(f, current -> arg[2])) return -1;
+    }
+    return ri_write_word(f, 0);
+}
+
 extern long avail_loc;
 
 /* Read a sequence of RIC instructions written by put_RIC       */
@@ -245,6 +267,46 @@ FILE * f;
 	  }
     }
     return(result);
+}
+
+/* Read a RIC sequence written by ri_put_RIC. */
+struct RIC_instr * ri_get_RIC(f)
+FILE * f;
+{
+    struct RIC_instr *current;
+    struct RIC_instr *last = (struct RIC_instr *)0;
+    struct RIC_instr *result = (struct RIC_instr *)0;
+    long opcode, label_arg, n_args, arg0, arg1, arg2;
+    char *label;
+
+    while (ri_read_word(f, &opcode) == 0 && opcode != 0) {
+        if (ri_read_word(f, &label_arg) || ri_read_word(f, &n_args))
+            return (struct RIC_instr *)0;
+        if (label_arg) {
+            if (ri_read_string(f, &label)) return (struct RIC_instr *)0;
+            current = (struct RIC_instr *)gc_malloc(sizeof(struct RIC_instr)
+                                                     + strlen(label));
+            strcpy(current -> label, label);
+            free(label);
+        } else {
+            if (ri_read_word(f, &arg0) || ri_read_word(f, &arg1)
+                || ri_read_word(f, &arg2)) return (struct RIC_instr *)0;
+            current = (struct RIC_instr *)gc_malloc(sizeof(struct RIC_instr));
+            current -> arg[0] = arg0;
+            current -> arg[1] = arg1;
+            current -> arg[2] = arg2;
+            current -> label[0] = '\0';
+            if (opcode == DCL && arg0 >= avail_loc) avail_loc = arg0 + 1;
+        }
+        current -> op_code = opcode;
+        current -> label_arg = label_arg;
+        current -> n_args = n_args;
+        current -> next_instr = (struct RIC_instr *)0;
+        if (result == (struct RIC_instr *)0) result = current;
+        else last -> next_instr = current;
+        last = current;
+    }
+    return result;
 }
 
 

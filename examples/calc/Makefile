@@ -35,5 +35,13 @@ primes/prime_test.o: primes/prime_test.r primes/Zmod.o xlong.o
 	$(RC) -cpN $(RFLAGS) primes/prime_test.r
 
 clean:
-	rm -f *.o *.s *.G *.ri cr/*.o cr/*.s cr/*.G cr/*.ri \
-		primes/*.o primes/*.s primes/*.G primes/*.ri calc
+	rm -f *.o *.s *.G *.ri calc .objfilelist \
+		calc.c calc.s calc.G \
+		xlong.c xlong.s xlong.G xlong.ri window.c window.s window.G window.ri \
+		cr/cr.c cr/cr.s cr/cr.G cr/cr.ri \
+		cr/exp.c cr/exp.s cr/exp.G cr/exp.ri \
+		cr/fusion.c cr/fusion.s cr/fusion.G cr/fusion.ri \
+		cr/interval.c cr/interval.s cr/interval.G cr/interval.ri \
+		cr/rat.c cr/rat.s cr/rat.G cr/rat.ri \
+		primes/Zmod.c primes/Zmod.s primes/Zmod.G primes/Zmod.ri \
+		primes/prime_test.c primes/prime_test.s primes/prime_test.G primes/prime_test.ri

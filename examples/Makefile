@@ -16,6 +16,7 @@ PROGRAMS = \
 LIBRARIES = identity lazy_sexpr memo psexpr tree
 LIBRARY_OBJECTS = $(LIBRARIES:%=%.o)
 LIBRARY_INTERFACES = $(LIBRARIES:%=%.ri)
+GENERATED = $(foreach ext,c s G o ri,$(PROGRAMS:%=%.$(ext)) $(LIBRARIES:%=%.$(ext)))
 
 .PHONY: all programs libraries calc clean
 
@@ -47,5 +48,5 @@ calc:
 	$(MAKE) -C calc RC="$(abspath $(RC))"
 
 clean:
-	rm -f $(PROGRAMS) $(LIBRARY_OBJECTS) $(LIBRARY_INTERFACES)
+	rm -f $(PROGRAMS) $(GENERATED)
 	$(MAKE) -C calc clean

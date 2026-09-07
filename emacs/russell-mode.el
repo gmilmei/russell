@@ -108,6 +108,14 @@
   (let ((token (russell--line-first-token)))
     (member token '("in" "ni" "fi" "od" "}"))))
 
+(defun russell--alternative-line-p ()
+  "Return non-nil if the current line is a Russell `#' alternative.
+Preprocessor directives also begin with `#', but an alternative has an
+`==>' on its line."
+  (save-excursion
+    (back-to-indentation)
+    (looking-at "#[^\n]*==>")))
+
 (defun russell--calculate-indentation ()
   "Calculate indentation for the current Russell line."
   (let ((target (line-beginning-position))
@@ -122,7 +130,12 @@
         (forward-line 1))
       (when (russell--closing-line-p)
         (setq depth (max 0 (1- depth))))
-      (* russell-indent-offset depth))))
+      (let ((indent (* russell-indent-offset depth)))
+        ;; With the usual four-space block indent, placing `#' two spaces
+        ;; before its branch expression makes all alternatives line up.
+        (if (russell--alternative-line-p)
+            (max 0 (- indent 2))
+          indent)))))
 
 (defun russell-indent-line ()
   "Indent the current Russell line."

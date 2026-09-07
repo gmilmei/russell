@@ -159,16 +159,20 @@ long forced_resize()
     return(result);
 }
 
-/* Block SIGWINCH. Save old mask in saved_mask */
-static unsigned long saved_mask;
+/* Block SIGWINCH. Save the previous mask in saved_mask. */
+static sigset_t saved_mask;
 
 void block_sigwinch()
 {
-    saved_mask = sigblock(sigmask(SIGWINCH));
+    sigset_t mask;
+
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGWINCH);
+    sigprocmask(SIG_BLOCK, &mask, &saved_mask);
 }
 
 /* Unblock SIGWINCH by restoring old signal mask */
 void unblock_sigwinch()
 {
-    sigsetmask(saved_mask);
+    sigprocmask(SIG_SETMASK, &saved_mask, (sigset_t *)0);
 }

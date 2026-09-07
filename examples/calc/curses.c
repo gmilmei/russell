@@ -1,4 +1,8 @@
+/* ncurses declares a different, file-oriented `putwin'.  The Russell
+ * compatibility wrapper below intentionally retains the historical symbol. */
+#define putwin ncurses_putwin
 #include	<curses.h>
+#undef putwin
 #define		MAXWINDOWS 10
 
 WINDOW *get_newwin(w,x,y,z)

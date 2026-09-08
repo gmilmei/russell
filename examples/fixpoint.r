@@ -2,14 +2,14 @@
 # define fn  func[ x: val Short ] val Short
 
 let
-    Y == func[ g func[ fn] fn ] {
-	     func [ x val Short ] val Short {
+    Y == func[ g: func[ fn] fn ] {
+	     func [ x: val Short ] val Short {
 		 (g[Y[g]]) [x]
 	     }   
 	 };
 
-    G == func[ f fn  ] {
-	     func[ n val Short ] val Short {
+    G == func[ f: fn  ] {
+	     func[ n: val Short ] val Short {
 		 if
 		    n > 0 ==> n * f [n - 1]
 		 #  n = 0 ==> 1

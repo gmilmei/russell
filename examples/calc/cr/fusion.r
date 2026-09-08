@@ -18,7 +18,16 @@ func [] {
 
 	to_cr ==
 	    func[x: val Rat] val cr {
-		cr$In[get_num[x]] / cr$In[get_den[x]];
+		let
+		    num == get_num[x];
+		    den == get_den[x]
+		in
+		    if den = Long$1 ==>
+			cr$In[num]
+		    # else ==>
+			cr$In[num] / cr$In[den]
+		    fi
+		ni;
 	    };
 		
 	to_cr == func[x: val cr] val cr { x };

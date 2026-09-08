@@ -555,7 +555,9 @@ in use Win in
 		    ni
 		 };
 
-    ln10 == ln[stack_elem$In[Long$10]];
+    (* Computing ln[10] initializes the Constructive-Real inverse path.
+       It is only needed for scientific notation, so defer it until then. *)
+    ln10 == func[impure] { ln[stack_elem$In[Long$10]] };
 
    (*
     * Display n in scientific notation
@@ -578,7 +580,7 @@ in use Win in
 		if compare[n, 0.0, rel_prec, abs_prec] = Short$0 then
 		    wput[main_win, " 0.0"];
 		else
-		    exponent := xLong$from_Long[to_Long[ln[abs_n]/ln10,
+		    exponent := xLong$from_Long[to_Long[ln[abs_n]/ln10[],
 							small_prec]];
 		    scale_factor := In[to_Long[xLong$10**abs[exponent]]];
 		    if abs[exponent] > xLong$500 then
@@ -1552,6 +1554,5 @@ in
     endwin[];
     exit[0];
 ni ni ni ni
-
 
 

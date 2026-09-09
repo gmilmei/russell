@@ -51,9 +51,9 @@
     ;; Russell comments are delimited by (* and *).  The two-character
     ;; delimiters are installed by `syntax-propertize'.
     (modify-syntax-entry ?_ "w" table)
-    (modify-syntax-entry ?' "\\\"" table)
+    (modify-syntax-entry ?' "\"" table)
     (modify-syntax-entry ?\\ "\\\\" table)
-    (modify-syntax-entry ?\" "\\\"" table)
+    (modify-syntax-entry ?\" "\"" table)
     (modify-syntax-entry ?\( "()" table)
     (modify-syntax-entry ?\) ")(" table)
     table)

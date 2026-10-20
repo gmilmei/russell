@@ -36,13 +36,21 @@
 # define GCC
 # undef GCC
 
+extern char *getenv();
+
+static char *delab_name()
+{
+    char *russell_root;
+
+    russell_root = getenv("RUSSELL_ROOT");
+    if (russell_root != 0 && *russell_root != '\0') {
+        return concat(russell_root, "/src/delab/delab");
+    }
+    return RROOT "/src/delab/delab";
+}
 
 # define STDOUT_FD 1
-# ifdef USE_ELF_COLD_START
-#   define DELAB RROOT "/src/delab/delab"
-# else
-#   define DELAB strcat(RROOT, "/src/delab/delab")
-# endif
+# define DELAB delab_name()
 # ifdef GCC
 #   define CC "/usr/local/gcc"
 # else

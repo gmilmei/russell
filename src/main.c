@@ -148,6 +148,8 @@ char * entry_name;  /* "" for regular compilations.  Used for -c */
 
 extern int GC_dont_gc;
 
+extern char *getenv();
+
 /*
  *  Input and output file names and declarations.
  */
@@ -394,8 +396,14 @@ char **argv;
      */
     if (cold_start && !initflag) {
 	char initname[1024];
+        char *russell_root;
 
-	snprintf(initname, sizeof(initname), "%s/src/%s", RROOT,
+        russell_root = getenv("RUSSELL_ROOT");
+        if (russell_root == 0 || *russell_root == '\0') {
+            russell_root = RROOT;
+        }
+
+	snprintf(initname, sizeof(initname), "%s/src/%s", russell_root,
 		 Gflag ? "Ginitenv.r" : "initenv.r");
 	if (freopen(initname, "r", stdin) == NULL) {
 	    fprintf(stderr, "Can't open standard environment %s\n", initname);

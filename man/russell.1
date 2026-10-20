@@ -1,0 +1,87 @@
+.TH RUSSELL 1 "October 2026" "Russell 3.3" "User Commands"
+.SH NAME
+russell \- compiler driver for the Russell programming language
+.SH SYNOPSIS
+.B rc
+.RI [ options ] " file.r " [ object-file ...]
+.br
+.B rhelp
+.RI [ \-k ] " [topic]"
+.SH DESCRIPTION
+.B rc
+compiles a Russell source file and, unless instructed otherwise, links the
+resulting program.  The default output file is
+.IR a.out .
+The Linux port produces 32-bit i386 ELF executables and uses the system
+Boehm garbage collector.
+.PP
+The compiler normally finds its installed compiler passes, runtime object,
+and standard environment automatically.  They are installed below the
+architecture-dependent Russell data directory.
+.SH OPTIONS
+.TP
+.B \-c
+Compile only.  Produce an object file and a Russell interface file, but do
+not link an executable.
+.TP
+.B \-G
+Generate Russell Intermediate Code in a
+.I .G
+file only.
+.TP
+.B \-O
+Enable the historical local optimizer.  Repeating this option enables
+additional historical optimization passes.
+.TP
+.B \-o \fIname\fR
+Write the linked program to
+.IR name .
+.TP
+.B \-p
+Run the C preprocessor on the Russell source before compilation.
+.TP
+.B \-S
+Generate assembly code but do not assemble or link it.
+.TP
+.B \-r
+Leave the output relocatable for a later link step.
+.SH HELP
+.B rhelp
+prints the on-line Russell manual.  With a topic, it prints help for that
+topic; for example:
+.PP
+.EX
+rhelp compiling
+rhelp inference
+.EE
+.PP
+Use
+.B rhelp -k
+to search the manual by keyword.
+.SH FILES
+.TP
+.I /usr/lib/russell/
+Compiler passes, runtime objects, standard environment, and on-line help
+files on a 32-bit Fedora installation.
+.TP
+.I /usr/share/doc/russell/
+Examples and additional Russell documentation.
+.SH ENVIRONMENT
+.TP
+.B RUSSELL_ROOT
+Overrides the compiler data directory.  This is normally set by the
+installed
+.B rc
+wrapper and is useful when testing a staged installation.
+.TP
+.B RUSSELL_BASE
+Overrides the base directory used by
+.BR rhelp (1).
+.SH EXAMPLES
+.EX
+rc -o fact /usr/share/doc/russell/examples/fact.r
+\&./fact
+.EE
+.SH AUTHORS
+Russell was developed by Alan Demers, J. Donahue, Hans-Juergen Boehm and
+others.  The Linux/i386 port is documented in the installed PORTING files.

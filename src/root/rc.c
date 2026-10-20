@@ -101,6 +101,23 @@ char *RICoptname;
 char *RICfiltername;
 char *cgname;
 
+extern char *malloc();
+extern char *getenv();
+
+static char *russell_root;
+
+static char *russell_path(root, suffix)
+char *root;
+char *suffix;
+{
+    char *result;
+
+    result = (char *)malloc(strlen(root) + strlen(suffix) + 1);
+    strcpy(result, root);
+    strcat(result, suffix);
+    return result;
+}
+
 /* Unique names for temporary files */
 char *rctmp0name;   /* Preprocessor output */
 char *rctmp1name;   /* Optimizer input */
@@ -236,12 +253,23 @@ char **argv;
     /* Clean up after SIGINT */
         signal(SIGINT, intr_handler);
 
+    russell_root = getenv("RUSSELL_ROOT");
+    if (russell_root != 0 && *russell_root != '\0') {
+        ppname = PPNAME;
+        rcname = russell_path(russell_root, "/src/");
+        optname = russell_path(russell_root, "/src/opt.awk");
+        cgname = russell_path(russell_root, "/src/RIC_to_C/to_C");
+        RICoptname = russell_path(russell_root, "/src/RICopt");
+        RICfiltername = russell_path(russell_root, "/src/RICfilter/filter");
+    } else {
+        russell_root = RROOT;
     ppname = PPNAME;
     rcname = RCNAME;
     optname = OPTNAME;
     cgname = CGNAME;
     RICoptname = RICOPTNAME;
     RICfiltername = RICFILTERNAME;
+    }
 
     argf = -1;
 
@@ -831,17 +859,9 @@ char **argv;
 	    add_objfile(outfilename(argv[argf], 'o'));
 	    if (!rflag) {
 #               ifdef RT
-#                 ifdef USE_ELF_COLD_START
-                  add_objfile(RROOT "/rt_runtime/rrt0.o");
-#                 else
-                  add_objfile(strcat(RROOT, "/rt_runtime/rrt0.o"));
-#                 endif
+                  add_objfile(russell_path(russell_root, "/rt_runtime/rrt0.o"));
 #               else
-#                 ifdef USE_ELF_COLD_START
-                  add_objfile(RROOT "/runtime/rrt0.o");
-#                 else
-                  add_objfile(strcat(RROOT, "/runtime/rrt0.o"));
-#                 endif
+                  add_objfile(russell_path(russell_root, "/runtime/rrt0.o"));
 #               endif
 	      /* Add C library to list of libraries */
 #             ifndef USE_ELF_COLD_START
